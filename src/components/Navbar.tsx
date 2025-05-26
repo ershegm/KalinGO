@@ -17,7 +17,7 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, isAdmin, signOut } = useAuth();
 
   // Change navbar style on scroll
   useEffect(() => {
@@ -34,6 +34,13 @@ const Navbar = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  // ВРЕМЕННО: выводим email для диагностики
+  useEffect(() => {
+    if (user?.email) {
+      console.log("Текущий email пользователя:", user.email);
+    }
+  }, [user]);
 
   // Get user initials for avatar
   const getInitials = () => {
@@ -108,6 +115,17 @@ const Navbar = () => {
               >
                 О сервисе
               </Link>
+              {user?.email?.trim().toLowerCase() ===
+                "artemdavydenko11@gmail.com" && (
+                <Link
+                  to="/admin"
+                  className={`text-xl font-semibold transition-colors ${
+                    scrolled ? "text-kalingo-blue" : "text-white"
+                  } hover:text-kalingo-amber`}
+                >
+                  Админка
+                </Link>
+              )}
             </div>
 
             {user ? (
@@ -155,11 +173,9 @@ const Navbar = () => {
             ) : (
               <div className="flex items-center space-x-4">
                 <Button
-                  variant="ghost"
+                  variant="default"
                   onClick={handleLoginClick}
-                  className={`text-xl font-semibold px-6 py-2 ${
-                    scrolled ? "text-foreground" : "text-white"
-                  } hover:text-kalingo-amber`}
+                  className="bg-emerald-500 hover:bg-emerald-600 text-white text-xl font-semibold px-6 py-2"
                 >
                   Войти
                 </Button>
@@ -213,6 +229,16 @@ const Navbar = () => {
               >
                 О сервисе
               </Link>
+              {user?.email?.trim().toLowerCase() ===
+                "artemdavydenko11@gmail.com" && (
+                <Link
+                  to="/admin"
+                  className="text-foreground hover:text-kalingo-blue transition-colors py-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Админка
+                </Link>
+              )}
 
               {user ? (
                 <>
@@ -256,24 +282,14 @@ const Navbar = () => {
               ) : (
                 <>
                   <Button
-                    variant="outline"
-                    className="w-full"
+                    variant="default"
+                    className="w-full bg-emerald-500 hover:bg-emerald-600 text-white"
                     onClick={() => {
                       setIsOpen(false);
                       handleLoginClick();
                     }}
                   >
                     Войти
-                  </Button>
-                  <Button
-                    variant="default"
-                    className="w-full bg-kalingo-blue hover:bg-kalingo-blue/90"
-                    onClick={() => {
-                      setIsOpen(false);
-                      handleLoginClick();
-                    }}
-                  >
-                    Регистрация
                   </Button>
                 </>
               )}

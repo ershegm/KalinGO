@@ -13,9 +13,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import {
+  Alert,
+  AlertDescription,
+} from "@/components/ui/alert";
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -42,6 +46,8 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('login');
+  const [loginError, setLoginError] = useState('');
+  const [registerError, setRegisterError] = useState('');
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -88,17 +94,33 @@ const Auth = () => {
     },
   });
 
+  // Map error messages to Russian
+  const translateErrorMessage = (error: string) => {
+    const errorMessages: Record<string, string> = {
+      'Invalid login credentials': 'Неверный email или пароль',
+      'Email not confirmed': 'Email не подтвержден',
+      'User already registered': 'Пользователь с таким email уже зарегистрирован',
+      'Password should be at least 6 characters': 'Пароль должен содержать минимум 6 символов',
+    };
+
+    return errorMessages[error] || 'Произошла ошибка. Пожалуйста, попробуйте еще раз';
+  };
+
   // Handle login form submission
   const onLoginSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
+    setLoginError('');
+    
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       });
 
       if (error) {
-        throw error;
+        console.error('Login error:', error);
+        setLoginError(translateErrorMessage(error.message));
+        return;
       }
 
       toast({
@@ -107,11 +129,8 @@ const Auth = () => {
       });
       
     } catch (error: any) {
-      toast({
-        title: 'Ошибка входа',
-        description: error?.message || 'Произошла ошибка при входе в систему',
-        variant: 'destructive',
-      });
+      console.error('Login error:', error);
+      setLoginError(translateErrorMessage(error?.message));
     } finally {
       setIsLoading(false);
     }
@@ -120,6 +139,8 @@ const Auth = () => {
   // Handle register form submission
   const onRegisterSubmit = async (data: RegisterFormValues) => {
     setIsLoading(true);
+    setRegisterError('');
+    
     try {
       const { error } = await supabase.auth.signUp({
         email: data.email,
@@ -132,7 +153,9 @@ const Auth = () => {
       });
 
       if (error) {
-        throw error;
+        console.error('Register error:', error);
+        setRegisterError(translateErrorMessage(error.message));
+        return;
       }
 
       toast({
@@ -142,11 +165,8 @@ const Auth = () => {
       
       setActiveTab('login');
     } catch (error: any) {
-      toast({
-        title: 'Ошибка регистрации',
-        description: error?.message || 'Произошла ошибка при регистрации',
-        variant: 'destructive',
-      });
+      console.error('Register error:', error);
+      setRegisterError(translateErrorMessage(error?.message));
     } finally {
       setIsLoading(false);
     }
@@ -169,6 +189,13 @@ const Auth = () => {
             <TabsContent value="login">
               <Form {...loginForm}>
                 <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+                  {loginError && (
+                    <Alert variant="destructive" className="mb-4">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>{loginError}</AlertDescription>
+                    </Alert>
+                  )}
+                  
                   <FormField
                     control={loginForm.control}
                     name="email"
@@ -223,6 +250,13 @@ const Auth = () => {
             <TabsContent value="register">
               <Form {...registerForm}>
                 <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
+                  {registerError && (
+                    <Alert variant="destructive" className="mb-4">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>{registerError}</AlertDescription>
+                    </Alert>
+                  )}
+                  
                   <FormField
                     control={registerForm.control}
                     name="username"

@@ -7,165 +7,209 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
-      profiles: {
-        Row: {
-          id: string
-          username: string | null
-          full_name: string | null
-          avatar_url: string | null
-          bio: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id: string
-          username?: string | null
-          full_name?: string | null
-          avatar_url?: string | null
-          bio?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          username?: string | null
-          full_name?: string | null
-          avatar_url?: string | null
-          bio?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      routes: {
-        Row: {
-          id: string
-          title: string
-          description: string
-          category: 'historical' | 'cultural' | 'nature' | 'gastronomy' | 'architectural' | 'entertainment'
-          difficulty: 'easy' | 'medium' | 'hard'
-          duration: number
-          distance: number | null
-          image_url: string | null
-          start_point: string
-          end_point: string
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          title: string
-          description: string
-          category: 'historical' | 'cultural' | 'nature' | 'gastronomy' | 'architectural' | 'entertainment'
-          difficulty: 'easy' | 'medium' | 'hard'
-          duration: number
-          distance?: number | null
-          image_url?: string | null
-          start_point: string
-          end_point: string
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          title?: string
-          description?: string
-          category?: 'historical' | 'cultural' | 'nature' | 'gastronomy' | 'architectural' | 'entertainment'
-          difficulty?: 'easy' | 'medium' | 'hard'
-          duration?: number
-          distance?: number | null
-          image_url?: string | null
-          start_point?: string
-          end_point?: string
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      route_points: {
-        Row: {
-          id: string
-          route_id: string
-          title: string
-          description: string
-          image_url: string | null
-          latitude: number
-          longitude: number
-          order_number: number
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          route_id: string
-          title: string
-          description: string
-          image_url?: string | null
-          latitude: number
-          longitude: number
-          order_number: number
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          route_id?: string
-          title?: string
-          description?: string
-          image_url?: string | null
-          latitude?: number
-          longitude?: number
-          order_number?: number
-          created_at?: string
-        }
-      }
       favorites: {
         Row: {
+          created_at: string | null
           id: string
-          user_id: string
-          route_id: string
-          created_at: string
+          route_id: string | null
+          user_id: string | null
         }
         Insert: {
+          created_at?: string | null
           id?: string
-          user_id: string
-          route_id: string
-          created_at?: string
+          route_id?: string | null
+          user_id?: string | null
         }
         Update: {
+          created_at?: string | null
           id?: string
-          user_id?: string
-          route_id?: string
-          created_at?: string
+          route_id?: string | null
+          user_id?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "routes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      points_of_interest: {
+        Row: {
+          coordinates: Json | null
+          created_at: string | null
+          description: string | null
+          id: string
+          image: string | null
+          name: string
+          order_index: number
+          route_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          coordinates?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image?: string | null
+          name: string
+          order_index: number
+          route_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          coordinates?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          image?: string | null
+          name?: string
+          order_index?: number
+          route_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "points_of_interest_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "routes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string
+          role: string | null
+          updated_at: string | null
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+          role?: string | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          role?: string | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Relationships: []
       }
       reviews: {
         Row: {
-          id: string
-          user_id: string
-          route_id: string
-          rating: number
           comment: string | null
-          created_at: string
-          updated_at: string
+          created_at: string | null
+          id: string
+          rating: number
+          route_id: string | null
+          updated_at: string | null
+          user_id: string | null
         }
         Insert: {
-          id?: string
-          user_id: string
-          route_id: string
-          rating: number
           comment?: string | null
-          created_at?: string
-          updated_at?: string
+          created_at?: string | null
+          id?: string
+          rating: number
+          route_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
-          id?: string
-          user_id?: string
-          route_id?: string
-          rating?: number
           comment?: string | null
-          created_at?: string
-          updated_at?: string
+          created_at?: string | null
+          id?: string
+          rating?: number
+          route_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "routes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      routes: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string
+          difficulty: string
+          distance: number | null
+          duration: number
+          end_point: string
+          id: string
+          image_url: string | null
+          locations: Json | null
+          map_coordinates: Json | null
+          map_embed_code: string | null
+          rating: number | null
+          start_point: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description: string
+          difficulty?: string
+          distance?: number | null
+          duration: number
+          end_point?: string
+          id?: string
+          image_url?: string | null
+          locations?: Json | null
+          map_coordinates?: Json | null
+          map_embed_code?: string | null
+          rating?: number | null
+          start_point?: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string
+          difficulty?: string
+          distance?: number | null
+          duration?: number
+          end_point?: string
+          id?: string
+          image_url?: string | null
+          locations?: Json | null
+          map_coordinates?: Json | null
+          map_embed_code?: string | null
+          rating?: number | null
+          start_point?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {
@@ -175,11 +219,115 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
-      route_category: 'historical' | 'cultural' | 'nature' | 'gastronomy' | 'architectural' | 'entertainment'
-      route_difficulty: 'easy' | 'medium' | 'hard'
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
     }
   }
 }
+
+type DefaultSchema = Database[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof Database },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof Database },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof Database },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof Database },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
